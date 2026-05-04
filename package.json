@@ -1,0 +1,913 @@
+{
+  "name": "mcrl2-tools",
+  "displayName": "mCRL2 Tools",
+  "description": "Adds commands to use mCRL2 tools",
+  "version": "0.0.1",
+  "publisher": "VafaTarighi",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VafaTarighi/mcrl2-tools.git"
+  },
+  "engines": {
+    "vscode": "^1.116.0"
+  },
+  "icon": "media/MarketPlace.png",
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "workspaceContains:**/*.mcrl2"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "configuration": [
+      {
+        "title": "mcrl22lps",
+        "properties": {
+          "mCRL2.mcrl22lps.statenames": {
+            "type": "boolean",
+            "default": false,
+            "description": "the name of the variable encoding the state of a parallel process has the shape si, with i an optional number. Using this flag this name is Pi, where P is the nameof the process. This makes it easier to determine to which process the state variable belongs from."
+          },
+          "mCRL2.mcrl22lps.binary": {
+            "type": "boolean",
+            "default": false,
+            "description": "when clustering use binary case functions instead of n-ary; in the presence of -w/--newstate, state variables are encoded by a vector of boolean variables"
+          },
+          "mCRL2.mcrl22lps.balance-summands": {
+            "type": "boolean",
+            "default": false,
+            "description": "transform inputs expressions p1 + ... + pn into a balanced tree before linearising. Sometimes helpful in preventing stack overflow."
+          },
+          "mCRL2.mcrl22lps.cluster": {
+            "type": "boolean",
+            "default": false,
+            "description": "all actions in the final LPS are clustered. Clustering means that summands with the same action labels are grouped together. For instance, a(f1) . P(g1) + a(f2) . P(g2) is replaced by sum b: Bool . a(if(b, f1, f2)) . P(if(b, f2, g2)). The advantage is that the number of summands can be reduced subtantially in this way. The disadvantage is that sum operators are introduced and new data sorts with auxiliary functions are generated. In order to avoid the generation of new sorts, the option -b/--binary can be used."
+          },
+          "mCRL2.mcrl22lps.delta": {
+            "type": "boolean",
+            "default": false,
+            "description": "add a true->delta summands to each state in each process; these delta's subsume all other conditional timed delta's, effectively reducing the number of delta summands drastically in the resulting linear process; speeds up linearisation. This is the default, but it does not deal correctly with time."
+          },
+          "mCRL2.mcrl22lps.check-only": {
+            "type": "boolean",
+            "default": false,
+            "description": "check syntax and static semantics; do not linearise"
+          },
+          "mCRL2.mcrl22lps.no-globvars": {
+            "type": "boolean",
+            "default": false,
+            "description": "instantiate don't care values with arbitrary constants, instead of modelling them by global variables. This has no effecton global variables that are declared in the specification."
+          },
+          "mCRL2.mcrl22lps.no-deltaelm": {
+            "type": "boolean",
+            "default": false,
+            "description": "avoid removing spurious delta summands. Due to the existence of time, delta summands cannot be omitted. Due to the presence of multi-actions the number of summands can be huge. The algorithm for removing delta summands simply works by comparing each delta summand with each other summand to see whether the condition of the one implies the condition of the other. Clearly, this has quadratic complexity, and can take a long time."
+          },
+          "mCRL2.mcrl22lps.lin-method": {
+            "type": "string",
+            "default": "regular",
+            "description": "use linearisation method NAME:",
+            "enum": [
+              "regular",
+              "regular2",
+              "stack"
+            ],
+            "enumDescriptions": [
+              "for generating an LPS in regular form (specification should be regular) (default)",
+              "for a variant of regular that uses more data variables (useful when regular does not work)",
+              "for using stack data types (useful when regular and regular2 do not work)"
+            ],
+            "enumItemLabels": [
+              "regular",
+              "regular2",
+              "stack"
+            ]
+          },
+          "mCRL2.mcrl22lps.no-sumelm": {
+            "type": "boolean",
+            "default": false,
+            "description": "avoid applying sum elimination in parallel composition"
+          },
+          "mCRL2.mcrl22lps.no-cluster": {
+            "type": "boolean",
+            "default": false,
+            "description": "the actions in intermediate LPSs are not clustered before they are put in parallel. By default these processes are clustered to avoid a blow-up in the number of summands when transforming two parallel linear processes into a single linear process. If a linear process with M summands is put in parallel with a linear process with N summands the resulting process has M×N + M + N summands. Both M and N can be substantially reduced by clustering at the cost of introducing new sorts and functions. See -c/--cluster, esp. for a short explanation of the clustering process."
+          },
+          "mCRL2.mcrl22lps.no-constelm": {
+            "type": "boolean",
+            "default": false,
+            "description": "do not try to apply constant elimination when generating a linear process."
+          },
+          "mCRL2.mcrl22lps.no-rewrite": {
+            "type": "boolean",
+            "default": false,
+            "description": "do not rewrite data terms while linearising; useful when the rewrite system does not terminate. This option also switches off the application of constant elimination."
+          },
+          "mCRL2.mcrl22lps.qlimit": {
+            "type": "integer",
+            "default": 10,
+            "description": "limit enumeration of universal and existential quantifiers in data expressions to NUM iterations (default NUM=10, NUM=0 for unlimited)."
+          },
+          "mCRL2.mcrl22lps.rewriter": {
+            "type": "string",
+            "default": "jitty",
+            "description": "use rewrite strategy NAME:",
+            "enum": [
+              "jitty",
+              "jittyc",
+              "jittyp"
+            ],
+            "enumDescriptions": [
+              "jitty rewriting (default)",
+              "compiled jitty rewriting",
+              "jitty rewriting with prover"
+            ],
+            "enumItemLabels": [
+              "jitty",
+              "jittyc",
+              "jittyp"
+            ]
+          },
+          "mCRL2.mcrl22lps.timed": {
+            "type": "boolean",
+            "default": false,
+            "description": "Translate the process to linear form preserving all timed information. In parallel processes the number of possible time constraints can be large, slowing down linearisation. Confer the --delta option which yiels a much faster translation that does not preserve timing correctly"
+          },
+          "mCRL2.mcrl22lps.timings": {
+            "type": "string",
+            "default": "",
+            "description": "append timing measurements to FILE. Measurements are written to standard error if no FILE is provided"
+          },
+          "mCRL2.mcrl22lps.newstate": {
+            "type": "boolean",
+            "default": false,
+            "description": "state variables are encoded using enumerated types instead of positive natural numbers (Pos). By using this option new finite sorts named Enumk are generated where k is the size of the domain. Also, auxiliary case functions and equalities are defined. In combination with the option --binary the finite sorts are encoded by booleans. (requires linearisation method regular or regular2)."
+          },
+          "mCRL2.mcrl22lps.no-alpha": {
+            "type": "boolean",
+            "default": false,
+            "description": "alphabet reductions are not applied. By default mcrl22lps attempts to distribute communication, hiding and allow operators over the parallel composition operator as this reduces the size of intermediate linear processes. By using this option, this step can be avoided. The name stems from the alphabet axioms in process algebra."
+          },
+          "mCRL2.mcrl22lps.quiet": {
+            "type": "boolean",
+            "default": false,
+            "description": "do not display warning messages"
+          },
+          "mCRL2.mcrl22lps.verbose": {
+            "type": "boolean",
+            "default": false,
+            "description": "display short log messages"
+          },
+          "mCRL2.mcrl22lps.debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "display detailed log messages"
+          },
+          "mCRL2.mcrl22lps.log-level": {
+            "type": "string",
+            "default": "verbose",
+            "description": "display log messages up to and including level; either warn, verbose, debug or trace",
+            "enum": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumDescriptions": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumItemLabels": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ]
+          }
+        }
+      },
+      {
+        "title": "lpsinfo",
+        "properties": {
+          "mCRL2.lpsinfo.timings": {
+            "type": "string",
+            "default": "",
+            "description": "append timing measurements to FILE. Measurements are written to standard error if no FILE is provided"
+          },
+          "mCRL2.lpsinfo.quiet": {
+            "type": "boolean",
+            "default": false,
+            "description": "do not display warning messages"
+          },
+          "mCRL2.lpsinfo.verbose": {
+            "type": "boolean",
+            "default": false,
+            "description": "display short log messages"
+          },
+          "mCRL2.lpsinfo.debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "display detailed log messages"
+          },
+          "mCRL2.lpsinfo.log-level": {
+            "type": "string",
+            "default": "verbose",
+            "description": "display log messages up to and including level; either warn, verbose, debug or trace",
+            "enum": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumDescriptions": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumItemLabels": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ]
+          }
+        }
+      },
+      {
+        "title": "lpsxsim",
+        "properties": {
+          "mCRL2.lpsxsim.qlimit": {
+            "type": "integer",
+            "default": 0,
+            "description": "limit enumeration of universal and existential quantifiers in data expressions to NUM iterations (default NUM=10, NUM=0 for unlimited)."
+          },
+          "mCRL2.lpsxsim.rewriter": {
+            "type": "string",
+            "default": "jitty",
+            "description": "use rewrite strategy NAME:",
+            "enum": [
+              "jitty",
+              "jittyc",
+              "jittyp"
+            ],
+            "enumDescriptions": [
+              "jitty rewriting (default)",
+              "compiled jitty rewriting",
+              "jitty rewriting with prover"
+            ],
+            "enumItemLabels": [
+              "jitty",
+              "jittyc",
+              "jittyp"
+            ]
+          },
+          "mCRL2.lpsxsim.timings": {
+            "type": "string",
+            "default": "",
+            "description": "append timing measurements to FILE. Measurements are written to standard error if no FILE is provided"
+          },
+          "mCRL2.lpsxsim.nodummy": {
+            "type": "boolean",
+            "default": false,
+            "description": "do not replace global variables in the LPS with dummy values"
+          },
+          "mCRL2.lpsxsim.quiet": {
+            "type": "boolean",
+            "default": false,
+            "description": "do not display warning messages"
+          },
+          "mCRL2.lpsxsim.verbose": {
+            "type": "boolean",
+            "default": false,
+            "description": "display short log messages"
+          },
+          "mCRL2.lpsxsim.debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "display detailed log messages"
+          },
+          "mCRL2.lpsxsim.log-level": {
+            "type": "string",
+            "default": "verbose",
+            "description": "display log messages up to and including level; either warn, verbose, debug or trace",
+            "enum": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumDescriptions": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumItemLabels": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ]
+          }
+        }
+      },
+      {
+        "title": "lps2lts",
+        "properties": {
+          "mCRL2.lps2lts.action": {
+            "type": "string",
+            "default": "",
+            "description": "report actions in the transition system that occur in the comma-separated list of action names NAMES. The flag --trace can be used to generate traces to these actions."
+          },
+          "mCRL2.lps2lts.confluence": {
+            "type": "string",
+            "default": "ctau",
+            "description": "apply prioritization of transitions with the action label NAME (default 'ctau'). To give priority to tau use the flag -ctau. Only if the linear process is tau-confluent, the generated state space is branching bisimilar to the state space of the lps. The generation algorithm that is used does not require the linear process to be tau convergent."
+          },
+          "mCRL2.lps2lts.cached": {
+            "type": "boolean",
+            "default": false,
+            "description": "use enumeration caching techniques to speed up state space generation."
+          },
+          "mCRL2.lps2lts.deadlock": {
+            "type": "boolean",
+            "default": false,
+            "description": "report deadlocks (i.e. states with no outgoing transitions). The flag --trace can be used to generate traces to these deadlocks."
+          },
+          "mCRL2.lps2lts.divergence": {
+            "type": "boolean",
+            "default": false,
+            "description": "report divergences (i.e. states with a tau loop). The algorithm to detect divergences is linear for every state, so state space exploration becomes quadratic with this option enabled.The flag --trace can be used to generate traces to these divergences."
+          },
+          "mCRL2.lps2lts.max": {
+            "type": "integer",
+            "default": 0,
+            "description": "explore at most NUM states"
+          },
+          "mCRL2.lps2lts.multiaction": {
+            "type": "string",
+            "default": "",
+            "description": "report occurrences of multi-actions in the transition system that occur in the comma-separated list of actions NAMES. Works like --action, except that multi-actions are matched exactly, including data parameters. The flag --trace can be used to generate traces to these multi-actions."
+          },
+          "mCRL2.lps2lts.nondeterminism": {
+            "type": "boolean",
+            "default": false,
+            "description": "report nondeterministic states, i.e. states with outgoing transitions with the same label to different states. The flag --trace can be used to generate traces to these nondeterministic states."
+          },
+          "mCRL2.lps2lts.no-info": {
+            "type": "boolean",
+            "default": false,
+            "description": "do not add state label information to OUTFILE. This option only applies to .lts files."
+          },
+          "mCRL2.lps2lts.no-probability-checking": {
+            "type": "boolean",
+            "default": false,
+            "description": "do not check if probabilities in stochastic specifications have sensible values"
+          },
+          "mCRL2.lps2lts.out": {
+            "type": "string",
+            "default": "",
+            "description": "save the output in the specified FORMAT."
+          },
+          "mCRL2.lps2lts.qlimit": {
+            "type": "integer",
+            "default": 0,
+            "description": "limit enumeration of universal and existential quantifiers in data expressions to NUM iterations (default NUM=10, NUM=0 for unlimited)."
+          },
+          "mCRL2.lps2lts.rewriter": {
+            "type": "string",
+            "default": "jitty",
+            "description": "use rewrite strategy NAME:",
+            "enum": [
+              "jitty",
+              "jittyc",
+              "jittyp"
+            ],
+            "enumDescriptions": [
+              "jitty rewriting (default)",
+              "compiled jitty rewriting",
+              "jitty rewriting with prover"
+            ],
+            "enumItemLabels": [
+              "jitty",
+              "jittyc",
+              "jittyp"
+            ]
+          },
+          "mCRL2.lps2lts.strategy": {
+            "type": "string",
+            "default": "b",
+            "description": "explore the state space using strategy NAME:",
+            "enum": [
+              "b",
+              "breadth",
+              "d",
+              "depth",
+              "h",
+              "highway"
+            ],
+            "enumDescriptions": [
+              "breadth-first search (default)",
+              "breadth-first search (default)",
+              "depth-first search",
+              "depth-first search",
+              "highway search. Only part of the state space is explored, by restricting the size of the todo list. N.B. The implementation deviates slightly from the published version.",
+              "highway search. Only part of the state space is explored, by restricting the size of the todo list. N.B. The implementation deviates slightly from the published version."
+            ],
+            "enumItemLabels": [
+              "b",
+              "breadth",
+              "d",
+              "depth",
+              "h",
+              "highway"
+            ]
+          },
+          "mCRL2.lps2lts.save-at-end": {
+            "type": "boolean",
+            "default": false,
+            "description": "delay saving of the generated LTS until the end. This option only applies to .aut and .lts files, which are by default saved on the fly."
+          },
+          "mCRL2.lps2lts.suppress": {
+            "type": "boolean",
+            "default": false,
+            "description": "in verbose mode, do not print progress messages indicating the number of visited states and transitions."
+          },
+          "mCRL2.lps2lts.trace": {
+            "type": "integer",
+            "default": 0,
+            "description": "write a trace to states that are reported using one of the flags --action, --deadlock, --divergence, --multiaction or --nondeterminism. After NUM traces have been written state space generation stops. If NUM is not supplied the number of traces is not limited. For each trace a unique file with extension .trc (trace) will be created containing a shortest trace starting from the initial state. The traces can be pretty printed and converted to other formats using tracepp. If the maximum amount of traces has been reached, state space generation is aborted. There is no guarantee that the traces are fully contained in the partial state space."
+          },
+          "mCRL2.lps2lts.tau": {
+            "type": "string",
+            "default": "",
+            "description": "consider actions that occur in the comma-separated list of action names NAMES to be internal. This setting only affects the option --divergence."
+          },
+          "mCRL2.lps2lts.threads": {
+            "type": "integer",
+            "default": 0,
+            "description": "run with NUM threads (default=1). With multiple threads the stack size on a Mac is limited which can lead to bus errors."
+          },
+          "mCRL2.lps2lts.timings": {
+            "type": "string",
+            "default": "",
+            "description": "append timing measurements to FILE. Measurements are written to standard error if no FILE is provided"
+          },
+          "mCRL2.lps2lts.todo-max": {
+            "type": "integer",
+            "default": 0,
+            "description": "keep at most NUM states in the todo list; this option is only relevant for highway search, where NUM is the maximum number of states per level per thread."
+          },
+          "mCRL2.lps2lts.quiet": {
+            "type": "boolean",
+            "default": false,
+            "description": "do not display warning messages"
+          },
+          "mCRL2.lps2lts.verbose": {
+            "type": "boolean",
+            "default": false,
+            "description": "display short log messages"
+          },
+          "mCRL2.lps2lts.debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "display detailed log messages"
+          },
+          "mCRL2.lps2lts.log-level": {
+            "type": "string",
+            "default": "verbose",
+            "description": "display log messages up to and including level; either warn, verbose, debug or trace",
+            "enum": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumDescriptions": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumItemLabels": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ]
+          }
+        }
+      },
+      {
+        "title": "lps2pbes",
+        "properties": {
+          "mCRL2.lps2pbes.counter-example": {
+            "type": "boolean",
+            "default": false,
+            "description": "add counter example equations to the generated PBES"
+          },
+          "mCRL2.lps2pbes.check-only": {
+            "type": "boolean",
+            "default": false,
+            "description": "check syntax and semantics of state formula; do not generate PBES"
+          },
+          "mCRL2.lps2pbes.formula": {
+            "type": "string",
+            "default": "",
+            "description": "use the state formula from FILE"
+          },
+          "mCRL2.lps2pbes.preprocess-modal-operators": {
+            "type": "boolean",
+            "default": false,
+            "description": "insert dummy fixpoints in modal operators, which may lead to smaller PBESs"
+          },
+          "mCRL2.lps2pbes.out": {
+            "type": "string",
+            "default": "pbes",
+            "description": "use output format FORMAT:",
+            "enum": [
+              "bes",
+              "pbes",
+              "pgsolver",
+              "text"
+            ],
+            "enumDescriptions": [
+              "BES in internal format",
+              "PBES in internal format (default)",
+              "BES in PGSolver format",
+              "PBES in textual (mCRL2) format"
+            ],
+            "enumItemLabels": [
+              "bes",
+              "pbes",
+              "pgsolver",
+              "text"
+            ]
+          },
+          "mCRL2.lps2pbes.structured": {
+            "type": "boolean",
+            "default": false,
+            "description": "generate equations such that no mixed conjunctions and disjunctions occur"
+          },
+          "mCRL2.lps2pbes.timed": {
+            "type": "boolean",
+            "default": false,
+            "description": "use the timed version of the algorithm, even for untimed LPS's"
+          },
+          "mCRL2.lps2pbes.timings": {
+            "type": "string",
+            "default": "",
+            "description": "append timing measurements to FILE. Measurements are written to standard error if no FILE is provided"
+          },
+          "mCRL2.lps2pbes.unoptimized": {
+            "type": "boolean",
+            "default": false,
+            "description": "do not simplify boolean expressions"
+          },
+          "mCRL2.lps2pbes.quiet": {
+            "type": "boolean",
+            "default": false,
+            "description": "do not display warning messages"
+          },
+          "mCRL2.lps2pbes.verbose": {
+            "type": "boolean",
+            "default": false,
+            "description": "display short log messages"
+          },
+          "mCRL2.lps2pbes.debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "display detailed log messages"
+          },
+          "mCRL2.lps2pbes.log-level": {
+            "type": "string",
+            "default": "verbose",
+            "description": "display log messages up to and including level; either warn, verbose, debug or trace",
+            "enum": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumDescriptions": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumItemLabels": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ]
+          }
+        }
+      },
+      {
+        "title": "ltsview",
+        "properties": {
+          "mCRL2.ltsview.timings": {
+            "type": "string",
+            "default": "",
+            "description": "append timing measurements to FILE. Measurements are written to standard error if no FILE is provided"
+          },
+          "mCRL2.ltsview.quiet": {
+            "type": "boolean",
+            "default": false,
+            "description": "do not display warning messages"
+          },
+          "mCRL2.ltsview.verbose": {
+            "type": "boolean",
+            "default": false,
+            "description": "display short log messages"
+          },
+          "mCRL2.ltsview.debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "display detailed log messages"
+          },
+          "mCRL2.ltsview.log-level": {
+            "type": "string",
+            "default": "verbose",
+            "description": "display log messages up to and including level; either warn, verbose, debug or trace",
+            "enum": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumDescriptions": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumItemLabels": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ]
+          }
+        }
+      },
+      {
+        "title": "ltsgraph",
+        "properties": {
+          "mCRL2.ltsgraph.timings": {
+            "type": "string",
+            "default": "",
+            "description": "append timing measurements to FILE. Measurements are written to standard error if no FILE is provided"
+          },
+          "mCRL2.ltsgraph.quiet": {
+            "type": "boolean",
+            "default": false,
+            "description": "do not display warning messages"
+          },
+          "mCRL2.ltsgraph.verbose": {
+            "type": "boolean",
+            "default": false,
+            "description": "display short log messages"
+          },
+          "mCRL2.ltsgraph.debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "display detailed log messages"
+          },
+          "mCRL2.ltsgraph.log-level": {
+            "type": "string",
+            "default": "verbose",
+            "description": "display log messages up to and including level; either warn, verbose, debug or trace",
+            "enum": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumDescriptions": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumItemLabels": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ]
+          }
+        }
+      },
+      {
+        "title": "ltsinfo",
+        "properties": {
+          "mCRL2.ltsinfo.action-label": {
+            "type": "boolean",
+            "default": false,
+            "description": "print the labels of actions"
+          },
+          "mCRL2.ltsinfo.branching-factor": {
+            "type": "boolean",
+            "default": false,
+            "description": "print the average, minimal and maximal branching factor"
+          },
+          "mCRL2.ltsinfo.in": {
+            "type": "string",
+            "default": "",
+            "description": "use FORMAT as the input format",
+            "enum": [
+              "aut",
+              "dot",
+              "fsm",
+              "lts"
+            ],
+            "enumDescriptions": [
+              "Aldebaran format (CADP)",
+              "GraphViz format (no longer supported as input format)",
+              "Finite State Machine format",
+              "mCRL2 LTS format"
+            ],
+            "enumItemLabels": [
+              "aut",
+              "dot",
+              "fsm",
+              "lts"
+            ]
+          },
+          "mCRL2.ltsinfo.state-label": {
+            "type": "boolean",
+            "default": false,
+            "description": "print the labels of states"
+          },
+          "mCRL2.ltsinfo.timings": {
+            "type": "string",
+            "default": "",
+            "description": "append timing measurements to FILE. Measurements are written to standard error if no FILE is provided"
+          },
+          "mCRL2.ltsinfo.quiet": {
+            "type": "boolean",
+            "default": false,
+            "description": "do not display warning messages"
+          },
+          "mCRL2.ltsinfo.verbose": {
+            "type": "boolean",
+            "default": false,
+            "description": "display short log messages"
+          },
+          "mCRL2.ltsinfo.debug": {
+            "type": "boolean",
+            "default": false,
+            "description": "display detailed log messages"
+          },
+          "mCRL2.ltsinfo.log-level": {
+            "type": "string",
+            "default": "verbose",
+            "description": "display log messages up to and including level; either warn, verbose, debug or trace",
+            "enum": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumDescriptions": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ],
+            "enumItemLabels": [
+              "warn",
+              "verbose",
+              "debug",
+              "trace"
+            ]
+          }
+        }
+      }
+    ],
+    "commands": [
+      { "command": "mcrl2.mcrl22lps", "title": "mCRL2: (mcrl22lps) Convert mCRL2 to LPS", "icon": "$(gear)" },
+      { "command": "mcrl2.lps2lts", "title": "mCRL2: (lps2lts) Convert LPS to LTS", "icon": "$(gear)" },
+      { "command": "mcrl2.lps2pbes", "title": "mCRL2: (lps2pbes) Convert LPS to PBES", "icon": "$(gear)" },
+      { "command": "mcrl2.lpsinfo", "title": "mCRL2: (lpsinfo) Show LPS Information", "icon": "$(gear)" },
+      { "command": "mcrl2.lpsxsim", "title": "mCRL2: (lpsxsim) Extended Simulation of LPS", "icon": "$(gear)" },
+      { "command": "mcrl2.ltsgraph", "title": "mCRL2: (ltsgraph) Visualize LTS Graph", "icon": "$(play-circle)" },
+      { "command": "mcrl2.ltsinfo", "title": "mCRL2: (ltsinfo) Show LTS Information", "icon": "$(gear)" },
+      { "command": "mcrl2.ltsview", "title": "mCRL2: (ltsview) View LTS", "icon": "$(play)" },
+      { "command": "mcrl2.pbessolve", "title": "mCRL2: (pbessolve) Solve PBES", "icon": "$(gear)" }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "mcrl2.ltsview",
+          "group": "navigation",
+          "when": "resourceExtname == .mcrl2"
+        },
+        {
+          "command": "mcrl2.ltsgraph",
+          "group": "navigation@4",
+          "when": "resourceExtname == .mcrl2"
+        }
+      ],
+      "editor/title/run": [
+        {
+          "command": "mcrl2.mcrl22lps",
+          "group": "1_mcrl2@1",
+          "when": "resourceExtname == .mcrl2"
+        },
+        {
+          "command": "mcrl2.lps2lts",
+          "group": "lps@2",
+          "when": "resourceExtname == .mcrl2"
+        },
+        {
+          "command": "mcrl2.lps2pbes",
+          "group": "lps@3",
+          "when": "resourceExtname == .mcrl2"
+        },
+        {
+          "command": "mcrl2.lpsinfo",
+          "group": "lps@3",
+          "when": "resourceExtname == .mcrl2"
+        },
+        {
+          "command": "mcrl2.lpsxsim",
+          "group": "lps@3",
+          "when": "resourceExtname == .mcrl2"
+        },
+        {
+          "command": "mcrl2.ltsinfo",
+          "group": "lts@3",
+          "when": "resourceExtname == .mcrl2"
+        },
+        {
+          "command": "mcrl2.pbessolve",
+          "group": "pbes@3",
+          "when": "resourceExtname == .mcrl2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "mcrl2.mcrl22lps",
+          "when": "editorLangId == mcrl2"
+        },
+        {
+          "command": "mcrl2.lps2lts",
+          "when": "editorLangId == mcrl2"
+        },
+        {
+          "command": "mcrl2.lps2pbes",
+          "when": "editorLangId == mcrl2"
+        },
+        {
+          "command": "mcrl2.lpsinfo",
+          "when": "editorLangId == mcrl2"
+        },
+        {
+          "command": "mcrl2.lpsxsim",
+          "when": "editorLangId == mcrl2"
+        },
+        {
+          "command": "mcrl2.ltsgraph",
+          "when": "editorLangId == mcrl2"
+        },
+        {
+          "command": "mcrl2.ltsinfo",
+          "when": "editorLangId == mcrl2"
+        },
+        {
+          "command": "mcrl2.ltsview",
+          "when": "editorLangId == mcrl2"
+        },
+        {
+          "command": "mcrl2.pbessolve",
+          "when": "editorLangId == mcrl2"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^22.19.17",
+    "@types/vscode": "^1.116.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "eslint": "^9.39.3",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1"
+  }
+}
