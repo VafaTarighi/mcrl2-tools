@@ -2,7 +2,7 @@
   "name": "mcrl2-tools",
   "displayName": "mCRL2 Tools",
   "description": "Adds commands to use mCRL2 tools",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "VafaTarighi",
   "repository": {
     "type": "git",
@@ -20,6 +20,11 @@
   ],
   "main": "./out/extension.js",
   "contributes": {
+    "languages": [{
+            "id": "mcrl2",
+            "aliases": ["mCRL2", "mcrl2"],
+            "extensions": [".mcrl2","mcf"]
+    }],
     "configuration": [
       {
         "title": "mcrl22lps",
