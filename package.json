@@ -2,7 +2,7 @@
   "name": "mcrl2-tools",
   "displayName": "mCRL2 Tools",
   "description": "Adds commands to use mCRL2 tools",
-  "version": "0.0.2",
+  "version": "0.0.5",
   "publisher": "VafaTarighi",
   "repository": {
     "type": "git",
