@@ -3,10 +3,6 @@ import * as vscode from 'vscode';
 export default async function runShellTask(command: string) {
     const kind = { type: 'shell' };
 
-    // if command ends with `&&` drop them
-    if (command.endsWith("&&")) {
-        command = command.substring(0, command.length-2);
-    }
     const execution = new vscode.ShellExecution(command);
 
     const task = new vscode.Task(

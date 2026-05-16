@@ -2,7 +2,6 @@ import { Mcrl2Args } from '../types/common';
 import { LPS, MCRL2, Mcrl2Tool } from './common';
 
 export default class Mcrl22Lps extends Mcrl2Tool {
-
   public static getInstance() {
     if (!this.instance) {
       this.instance = new Mcrl22Lps("mcrl22lps");
@@ -10,14 +9,11 @@ export default class Mcrl22Lps extends Mcrl2Tool {
     return this.instance;
   }
 
-  public getCommand(getArgs?: () => Mcrl2Args) {
-    const args = getArgs?.();
+  protected getInputFile(basename: string, args?: Mcrl2Args) {
+    return MCRL2.getFile(basename);
+  }
 
-    const input = MCRL2.getFile();
-    const output = LPS.getFile();
-
-    
-    return this.commandString(input, args, output);
-
+  protected getOutputFile(basename: string, args?: Mcrl2Args) {
+    return LPS.getFile(basename);
   }
 }

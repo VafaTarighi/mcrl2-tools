@@ -1,12 +1,9 @@
-import fs from 'fs';
 import { LPS, MCF, Mcrl2Tool, PBES } from './common';
 import Mcrl22Lps from './mcrl22lps';
-import { Mcrl2Args, Mcrl2ToolType } from '../types/common';
-import { isDirty, resetDirty } from '../utils/isDirty';
+import { Mcrl2Args } from '../types/common';
 import overrideArg from '../utils/overrideArg';
 
 export default class Lps2Pbes extends Mcrl2Tool {
-
   public static getInstance() {
     if (!this.instance) {
       this.instance = new Lps2Pbes("lps2pbes", Mcrl22Lps.getInstance());
@@ -22,24 +19,12 @@ export default class Lps2Pbes extends Mcrl2Tool {
     super.run(overrideArg("lps2pbes", "formula", formula, getArgs));
   }
 
-  public getCommand(getArgs?: () => Mcrl2Args) {
-    const args = getArgs?.();
+  protected getInputFile(basename: string, args?: Mcrl2Args) {
+    return LPS.getFile(basename);
+  }
 
-    const input = LPS.getFile();
-
-    let command = "";
-    if (this.dependency) {
-      if (isDirty() || !fs.existsSync(input)) {
-        command += this.dependency.getCommand(getArgs);
-        resetDirty();
-      }
-    }
-
+  protected getOutputFile(basename: string, args?: Mcrl2Args) {
     const formula = args!.lps2pbes!["formula"] as string;
-
-    const output = PBES.getFile(formula);
-
-    command += this.commandString(input, args, output);
-    return command;
+    return PBES.getFile(basename, formula);
   }
 }
