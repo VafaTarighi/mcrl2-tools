@@ -811,19 +811,24 @@
       "editor/title": [
         {
           "command": "mcrl2.ltsview",
-          "group": "navigation",
+          "group": "navigation@1",
           "when": "resourceExtname == .mcrl2"
         },
         {
           "command": "mcrl2.ltsgraph",
-          "group": "navigation@4",
+          "group": "navigation@2",
           "when": "resourceExtname == .mcrl2"
         }
       ],
       "editor/title/run": [
         {
+          "command": "mcrl2.pbessolve",
+          "group": "1_pbes@0",
+          "when": "resourceExtname == .mcrl2"
+        },
+        {
           "command": "mcrl2.mcrl22lps",
-          "group": "1_mcrl2@1",
+          "group": "2_mcrl2@1",
           "when": "resourceExtname == .mcrl2"
         },
         {
@@ -838,22 +843,17 @@
         },
         {
           "command": "mcrl2.lpsinfo",
-          "group": "lps@3",
+          "group": "lps@4",
           "when": "resourceExtname == .mcrl2"
         },
         {
           "command": "mcrl2.lpsxsim",
-          "group": "lps@3",
+          "group": "lps@5",
           "when": "resourceExtname == .mcrl2"
         },
         {
           "command": "mcrl2.ltsinfo",
-          "group": "lts@3",
-          "when": "resourceExtname == .mcrl2"
-        },
-        {
-          "command": "mcrl2.pbessolve",
-          "group": "pbes@3",
+          "group": "lts@6",
           "when": "resourceExtname == .mcrl2"
         }
       ],
