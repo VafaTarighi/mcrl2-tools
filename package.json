@@ -805,7 +805,7 @@
       { "command": "mcrl2.ltsgraph", "title": "mCRL2: (ltsgraph) Visualize LTS Graph", "icon": "$(play-circle)" },
       { "command": "mcrl2.ltsinfo", "title": "mCRL2: (ltsinfo) Show LTS Information", "icon": "$(gear)" },
       { "command": "mcrl2.ltsview", "title": "mCRL2: (ltsview) View LTS", "icon": "$(play)" },
-      { "command": "mcrl2.pbessolve", "title": "mCRL2: (pbessolve) Solve PBES", "icon": "$(gear)" }
+      { "command": "mcrl2.pbessolve", "title": "mCRL2: (pbessolve) Solve PBES", "icon": "$(pass)" }
     ],
     "menus": {
       "editor/title": [
@@ -818,14 +818,14 @@
           "command": "mcrl2.ltsgraph",
           "group": "navigation@2",
           "when": "resourceExtname == .mcrl2"
+        },
+        {
+          "command": "mcrl2.pbessolve",
+          "group": "navigation@3",
+          "when": "editorLangId == mcrl2"
         }
       ],
       "editor/title/run": [
-        {
-          "command": "mcrl2.pbessolve",
-          "group": "1_pbes@0",
-          "when": "editorLangId == mcrl2"
-        },
         {
           "command": "mcrl2.mcrl22lps",
           "group": "2_mcrl2@1",
