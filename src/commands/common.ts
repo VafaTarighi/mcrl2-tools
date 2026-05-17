@@ -45,12 +45,14 @@ export abstract class Mcrl2Tool {
     }
 
     protected shouldRunDependency(basename: string, args: Mcrl2Args | undefined): boolean {
+        console.log("shouldRunDependency: ", this.name, args);
+        if (args && args[this.name]?._forceRebuild) {
+            return true;
+        }
         if (!this.dependency) {
             return false;
         }
-        console.log(this.name, "shouldRunDependency: ", this.dependency?.name, "getInputFile");
         const dependencyInput = this.dependency!.getInputFile(basename, args);
-        console.log(dependencyInput);
         const dependencyOutput = this.dependency!.getOutputFile(basename, args);
         if (!fs.existsSync(dependencyInput) || !dependencyOutput || !fs.existsSync(dependencyOutput)) {
             return true;
@@ -91,6 +93,18 @@ export class MCRL2 {
         return rootDir();
     }
     static getFile(basename: string) { return path.join(this.getDir(), basename) + '.mcrl2'; }
+
+    static getModels() {
+        const dir = this.getDir();
+        return fs.readdirSync(dir, { withFileTypes: true })
+            .filter(item => item.isFile() && item.name.endsWith('.mcrl2'))
+            .map(item => path.basename(item.name, '.mcrl2'));
+    }
+
+    static async chooseModel() {
+        const choice = await chooseOption(this.getModels(), "Choose a model");
+        return path.join(this.getDir(), choice + '.mcrl2');
+    }
 }
 
 export class LPS {
@@ -116,12 +130,12 @@ export class MCF {
     static getFormulas() {
         const dir = this.getDir();
         return fs.readdirSync(dir, { withFileTypes: true })
-            .filter(item => item.isFile())
+            .filter(item => item.isFile() && item.name.endsWith('.mcf'))
             .map(item => path.basename(item.name, '.mcf'));
     }
 
     static async chooseFormula() {
-        const choice = await chooseOption(this.getFormulas());
+        const choice = await chooseOption(this.getFormulas(), "Choose a mu-formula");
         return path.join(this.getDir(), choice + '.mcf');
     }
 }

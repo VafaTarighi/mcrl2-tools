@@ -3,6 +3,7 @@ import { Mcrl2Args, Mcrl2ToolType } from "../types/common";
 export default function overrideArg(tool: Mcrl2ToolType, key: string, value?: boolean | string | number, getArgs?: () => Mcrl2Args) {
     return () => {
         const args = getArgs?.() || {};
+        console.log("Inside overrideArg: ", args);
         if (!args[tool]) {
             args[tool] = {};
         }

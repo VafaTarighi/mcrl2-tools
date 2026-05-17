@@ -824,7 +824,7 @@
         {
           "command": "mcrl2.pbessolve",
           "group": "1_pbes@0",
-          "when": "resourceExtname == .mcrl2"
+          "when": "editorLangId == mcrl2"
         },
         {
           "command": "mcrl2.mcrl22lps",
@@ -860,35 +860,35 @@
       "commandPalette": [
         {
           "command": "mcrl2.mcrl22lps",
-          "when": "editorLangId == mcrl2"
+          "when": "resourceExtname == .mcrl2"
         },
         {
           "command": "mcrl2.lps2lts",
-          "when": "editorLangId == mcrl2"
+          "when": "resourceExtname == .mcrl2"
         },
         {
           "command": "mcrl2.lps2pbes",
-          "when": "editorLangId == mcrl2"
+          "when": "resourceExtname == .mcrl2"
         },
         {
           "command": "mcrl2.lpsinfo",
-          "when": "editorLangId == mcrl2"
+          "when": "resourceExtname == .mcrl2"
         },
         {
           "command": "mcrl2.lpsxsim",
-          "when": "editorLangId == mcrl2"
+          "when": "resourceExtname == .mcrl2"
         },
         {
           "command": "mcrl2.ltsgraph",
-          "when": "editorLangId == mcrl2"
+          "when": "resourceExtname == .mcrl2"
         },
         {
           "command": "mcrl2.ltsinfo",
-          "when": "editorLangId == mcrl2"
+          "when": "resourceExtname == .mcrl2"
         },
         {
           "command": "mcrl2.ltsview",
-          "when": "editorLangId == mcrl2"
+          "when": "resourceExtname == .mcrl2"
         },
         {
           "command": "mcrl2.pbessolve",

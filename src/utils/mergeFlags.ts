@@ -1,4 +1,4 @@
-import { CmdArgs, Mcrl2Args, Mcrl2ToolType } from "../types/common";
+import { CmdArgs } from "../types/common";
 
 export default function mergeFlags(a: CmdArgs | undefined, b: CmdArgs) {
     
