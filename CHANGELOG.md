@@ -2,9 +2,12 @@
 
 All notable changes to the "mcrl2-tools" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
-
-## [Unreleased]
+## [0.0.6] - 2026-05-17
+### Added
+- **Direct PBES Solving from Modal Formulas:** You can now run `pbessolve` directly from an active `.mcf` file. The extension automatically finds or generates the corresponding `.lps` and `.pbes` files to solve the formula.
+- **Editor Title Icon:** Added a "Run PBES Solve" icon to the editor title bar for `.mcf` files, providing quick access to formula verification.
+### Changed
+- **PBES Solving Workflow:** Refactored `pbessolve` command to support multi-step dependency chains starting from modal formulas.
 
 ## [0.0.5] - 2026-05-16
 ### Changed
